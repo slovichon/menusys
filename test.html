@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "">
+
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<script src="menu.js" type="text/javascript"></script>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso8559-1"/>
+	</head>
+	<body>
+		<form action="#">
+			<script>
+Menu.prototype.setDef = function()
+{
+	this.timeoutInterval			= 100
+
+if (this.menuItem)
+	this.title				= this.menuItem.value
+
+	this.blankImageURI			= '../img/blank.gif'
+
+	this.allowDrag				= true
+
+	this.titleFontFamily			= 'Verdana'
+	this.titleFontSize			= 10
+	this.titleHeight			= 12
+	this.titleCursor			= 'move'
+
+	this.titleBorderTopHeight		= 1
+	this.titleBorderRightWidth		= 1
+	this.titleBorderLeftWidth		= 1
+
+	this.titleBorderTopColor		= 'black'
+	this.titleBorderLeftColor		= 'black'
+	this.titleBorderRightColor		= 'black'
+
+	this.titlePaddingLeft			= 1
+
+	this.tweenTime				= 50
+	this.tweenSmooth			= 60
+
+	this.styles.top				= 0
+	this.styles.left			= 0
+
+	this.styles.zIndex			= 5
+
+	this.styles.backgroundColor		= '#cccccc'
+
+	this.styles.visibility			= kCSSVisibilityHide
+
+	this.styles.width			= 100
+
+	this.styles.borderLeftWidth		= 1
+	this.styles.borderRightWidth		= 1
+	this.styles.borderTopHeight 		= 1
+	this.styles.borderBottomHeight		= 1
+
+	this.styles.borderLeftColor		= 'black'
+	this.styles.borderRightColor		= 'black'
+	this.styles.borderTopColor		= 'black'
+	this.styles.borderBottomColor		= 'black'
+
+	this.styles.filter			= /*'progid:DXImageTransform.Microsoft.Shadow(direction=150,color=#000000,strength=4)'
+					+	  */'progid:DXImageTransform.Microsoft.Fade(duration=.25,overlap=0.0)'
+
+	return this
+}
+
+Menu.prototype.setRoot = function()
+{
+	this.styles.visibility 			= kCSSVisibilityShow
+
+	this.styles.width 			= 100
+
+	this.styles.top				= 5
+	this.styles.left			= 5
+
+	this.alwaysVisible			= true
+
+	this.styles.zIndex			= 5
+
+	this.styles.backgroundColor		= '#cccccc'
+
+	this.styles.borderLeftWidth		= 1
+	this.styles.borderRightWidth		= 1
+	this.styles.borderTopHeight 		= 1
+	this.styles.borderBottomHeight		= 1
+
+	this.styles.borderLeftColor		= 'black'
+	this.styles.borderRightColor		= 'black'
+	this.styles.borderTopColor		= 'black'
+	this.styles.borderBottomColor		= 'black'
+
+	return this
+}
+
+MenuItem.prototype.setDef = function()
+{
+	this.styles.space 			= 0
+	this.styles.spaceColor			= 'black'
+
+	this.styles.height			= 24
+
+	this.styles.paddingLeft			= 6
+	this.styles.paddingTop			= 3
+	this.styles.paddingBottom		= 3
+
+	this.styles.fontFamily			= 'Verdana,Sans-Serif'
+	this.styles.fontSize			= 12
+
+	this.subMenuMarkerImageURI		= '../img/menu/sub-menu-marker.gif'
+	this.subMenuMarkerImageVSpace		= 3
+
+	this.styles.backgroundColor		= '#999999'
+	this.styles.color			= 'black'
+
+	this.hoverStyles.backgroundColor	= 'yellow'
+	this.hoverStyles.color			= 'red'
+
+	this.styles.cursor			= 'hand'
+
+	return this
+}
+
+var rootMenu 	= new Menu('rootMenu').setDef(); rootMenu.title = 'Test'
+var subMenu1 	= new Menu('subMenu1',new MenuItem('Item 2','href2').setDef()).setDef()
+var subMenu2 	= new Menu('subMenu2',new MenuItem('Item 4','href4').setDef()).setDef()
+var subSubMenu	= new Menu('subSubMenu',new MenuItem('SS Item 1','subsubhref1').setDef()).setDef()
+
+rootMenu.addItem(new MenuItem('Item 1','href1').setDef())
+rootMenu.addSubMenu(subMenu1)
+rootMenu.addItem(new MenuItem('Item 3','href3').setDef())
+rootMenu.addSubMenu(subMenu2)
+rootMenu.addItem(new MenuItem('Item 5','href5').setDef())
+rootMenu.addItem(new MenuItem('Item 6','href6').setDef())
+
+subMenu1.addItem(new MenuItem('Sub Item1','subhref1').setDef())
+subMenu1.addItem(new MenuItem('Sub Item2','subhref2').setDef())
+subMenu1.addItem(new MenuItem('Sub Item3','subhref3').setDef())
+subMenu1.addItem(new MenuItem('Sub Item4','subhref4').setDef())
+
+subMenu2.addItem(new MenuItem('Sub Item1','subhref1').setDef())
+subMenu2.addItem(new MenuItem('Sub Item2','subhref2').setDef())
+subMenu2.addSubMenu(subSubMenu)
+subMenu2.addItem(new MenuItem('Sub Item4','subhref4').setDef())
+
+subSubMenu.addItem(new MenuItem('SS Item1','subsubhref1').setDef())
+subSubMenu.addItem(new MenuItem('SS Item2','subsubhref2').setDef())
+subSubMenu.addItem(new MenuItem('SS Item3','subsubhref3').setDef())
+
+var html = rootMenu.build()
+
+document.oncontextmenu = function() {return false}
+document.onmousedown = handler
+
+function setWndRet(val)
+{
+	if (gBrowser.hasWndEvents())
+		window.event.returnValue = val
+	
+	return
+}
+
+function handler(e)
+{
+	if (gBrowser.hasWndEvents())
+		e = window.event 
+
+	if (e.button == 2)
+	{
+//		var menuWidth	= parseInt(getStyle('menurootMenu','width'))
+//		var menuHeight	= parseInt(getStyle('menurootMenu','height'))
+
+		var destX	= 0
+		var destY	= 0
+
+		if (gBrowser.mouseX(e) + rootMenu.styles.width > gBrowser.width())
+			destX = gBrowser.width() - rootMenu.styles.width
+		else
+			destX = gBrowser.mouseX(e)
+
+		if (gBrowser.mouseY(e) - rootMenu.mouseYCache < 0)
+			destY = 0
+
+		else if (gBrowser.mouseY(e) + rootMenu.styles.height > gBrowser.height())
+			destY = gBrowser.height() - rootMenu.styles.height
+		else
+			destY = gBrowser.mouseY(e)
+
+		if (rootMenu.isHidden())
+		{
+			changeStyle('menurootMenu','left',	destX + 'px')
+			changeStyle('menurootMenu','top',	destY + 'px')
+
+			rootMenu.show()
+		} else {
+			if (rootMenu.tweenTimeout)
+			{
+				window.clearTimeout(rootMenu.tweenTimeout)
+
+				rootMenu.tweenTimeout = null
+			}
+
+			rootMenu.tween(destX,destY,50,60)
+		}
+		
+		setWndRet(false)
+
+		return false
+	} else {
+		rootMenu.hide()
+	}
+}
+
+document.writeln
+(
+	html
+	+ '<br/><br/><br/><br/>'
+	+ '<textarea rows="32" cols="120">'
+	+ html
+	+ '</textarea>'
+)
+
+getObj('menurootMenu').onmouseout = function() {return false}
+getObj('menusubMenu1').onmouseout = function() {return false}
+getObj('menusubMenu2').onmouseout = function() {return false}
+getObj('menusubSubMenu').onmouseout = function() {return false}
+
+			</script>
+		</form>
+	</body>
+</html>
